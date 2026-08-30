@@ -1,0 +1,15 @@
+{
+"_comment": "Customer Managed Role",
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "arn:aws:logs:eu-north-1:810876576924:log-group:/aws-glue/*"
+        }
+    ]
+}
