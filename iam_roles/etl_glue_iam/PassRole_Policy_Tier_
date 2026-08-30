@@ -1,0 +1,13 @@
+{
+"_comment": "Inline role sitting in AWS_ROLE_READ_S3_WRITE_S3_GLUE_ETL_SPARK_Policy_V2",
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "iam:PassRole",
+            "Resource": [
+                "arn:aws:iam::810876576924:role/AWS_ROLE_READ_S3_WRITE_S3_GLUE_ETL_SPARK_Policy_V2"
+            ]
+        }
+    ]
+}
