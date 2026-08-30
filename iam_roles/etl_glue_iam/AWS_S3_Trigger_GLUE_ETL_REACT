@@ -1,0 +1,28 @@
+{
+"_comment": "Inline policy: AWS_S3_Trigger_GLUE_ETL_REACT_Policy",
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::roshan-de-practice-2026",
+                "arn:aws:s3:::roshan-de-practice-2026/Raw_data/"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "glue:CreateTable",
+                "glue:UpdateTable",
+                "glue:GetTable",
+                "glue:GetDatabase",
+                "glue:CreateDatabase"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
