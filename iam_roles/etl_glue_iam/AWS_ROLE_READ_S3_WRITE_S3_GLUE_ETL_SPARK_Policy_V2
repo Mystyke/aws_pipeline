@@ -1,0 +1,55 @@
+{
+"_comment": "loyalty_tier_write",
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": "s3:GetObject",
+			"Resource": [
+				"arn:aws:s3:::roshan-de-practice-2026/clean-parquet/*",
+				"arn:aws:s3:::roshan-de-practice-2026/full_data_parquet/*"
+			]
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:PutObject",
+				"s3:DeleteObject"
+			],
+			"Resource": "arn:aws:s3:::roshan-de-practice-2026/loyalty-tier/*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": "s3:ListBucket",
+			"Resource": "arn:aws:s3:::roshan-de-practice-2026",
+			"Condition": {
+				"StringLike": {
+					"s3:prefix": [
+						"clean-parquet/*",
+						"full_data_parquet/*",
+						"loyalty-tier/*"
+					]
+				}
+			}
+		},
+		{
+			"Effect": "Allow",
+			"Action": "s3:GetObject",
+			"Resource": "arn:aws:s3:::aws-glue-assets-810876576924-eu-north-1/scripts/*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"glue:CreateSession",
+				"glue:GetSession",
+				"glue:DeleteSession",
+				"glue:StopSession",
+				"glue:RunStatement",
+				"glue:GetStatement",
+				"glue:CancelStatement",
+				"glue:TagResource"
+			],
+			"Resource": "arn:aws:glue:eu-north-1:810876576924:session/*"
+		}
+	]
+}

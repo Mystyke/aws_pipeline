@@ -1,0 +1,16 @@
+{
+"_comment": "Inline Policy:AWS_LAMBDA_S3_TRIGGER_GLUE_ETL_SPARK_JOB_Policy",
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"glue:StartJobRun",
+				"glue:GetJobRun"
+			],
+			"Resource": [
+				"arn:aws:glue:eu-north-1:810876576924:job/S3_RAW_CLEAN_sPARK"
+			]
+		}
+	]
+}
