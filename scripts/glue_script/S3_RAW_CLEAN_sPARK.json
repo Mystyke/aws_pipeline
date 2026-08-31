@@ -1,0 +1,47 @@
+{
+	"jobConfig": {
+		"name": "S3_RAW_CLEAN_sPARK",
+		"description": "Cleaning the quoted newline issue within the column \"Storelocation\" causing the reader to put it on a new line",
+		"role": "arn:aws:iam::810876576924:role/AWS_ROLE_READ_S3_WRITE_S3_GLUE_ETL_SPARK",
+		"command": "glueetl",
+		"version": "5.1",
+		"runtime": null,
+		"workerType": "G.1X",
+		"numberOfWorkers": 10,
+		"maxCapacity": 10,
+		"jobRunQueuingEnabled": false,
+		"maxRetries": 0,
+		"timeout": 480,
+		"maxConcurrentRuns": 1,
+		"security": "none",
+		"scriptName": "S3_RAW_CLEAN_sPARK.py",
+		"scriptLocation": "s3://aws-glue-assets-810876576924-eu-north-1/scripts/",
+		"language": "python-3",
+		"spark": true,
+		"sparkConfiguration": "standard",
+		"jobParameters": [
+			{
+				"key": "--conf",
+				"value": "spark.eventLog.rolling.enabled=true --conf spark.sql.catalog.glue_catalog.glue.skip-name-validation=true",
+				"existing": false
+			}
+		],
+		"tags": [],
+		"jobMode": "DEVELOPER_MODE",
+		"createdOn": "2026-08-14T07:16:10.559Z",
+		"developerMode": true,
+		"connectionsList": [],
+		"temporaryDirectory": "s3://aws-glue-assets-810876576924-eu-north-1/temporary/",
+		"logging": true,
+		"glueHiveMetastore": true,
+		"etlAutoTuning": true,
+		"metrics": true,
+		"observabilityMetrics": true,
+		"bookmark": "job-bookmark-disable",
+		"sparkPath": "s3://aws-glue-assets-810876576924-eu-north-1/sparkHistoryLogs/",
+		"maintenanceWindow": null
+	},
+	"hasBeenSaved": false,
+	"usageProfileName": null,
+	"script": "\"\"\"\nAWS Glue ETL Job: Fix multi-line CSV fields and convert to Parquet\n--------------------------------------------------------------------\nPurpose:\n  Reads raw CSV data from S3 where quoted fields (e.g. StoreLocation)\n  contain embedded newlines, which breaks Athena's default row-splitting\n  behavior. Uses Spark's native multiLine CSV reader to parse it correctly,\n  then writes the cleaned data out as Parquet to a new S3 location.\n\nHow to use:\n  1. In AWS Glue Console -> ETL jobs -> Create job -> Spark\n  2. Paste this script in (or upload as the job script)\n  3. Update the SOURCE_PATH and TARGET_PATH constants below\n  4. Set the job parameter --JOB_NAME when running\n  5. Attach an IAM role with read access to SOURCE_PATH and write access\n     to TARGET_PATH\n  6. After the job succeeds, create/update your Glue Catalog table (or run\n     a crawler) pointed at TARGET_PATH, using the Parquet SerDe\n\"\"\"\n\nimport sys\nfrom awsglue.transforms import *\nfrom awsglue.utils import getResolvedOptions\nfrom pyspark.context import SparkContext\nfrom awsglue.context import GlueContext\nfrom awsglue.job import Job\nfrom pyspark.sql.functions import regexp_replace, col\n\n# ---- CONFIG: update these for your environment ----\nSOURCE_PATH = \"s3://roshan-de-practice-2026/Raw__data/\"\nTARGET_PATH = \"s3://roshan-de-practice-2026/clean-parquet/\"\nCOLUMNS_TO_CLEAN = [\"StoreLocation\"]  # columns that may contain embedded newlines\n\n# ---- Job boilerplate ----\nargs = getResolvedOptions(sys.argv, ['JOB_NAME'])\nsc = SparkContext()\nglueContext = GlueContext(sc)\nspark = glueContext.spark_session\njob = Job(glueContext)\njob.init(args['JOB_NAME'], args)\n\n# ---- Read raw CSV ----\n# multiLine=True tells Spark's CSV reader to treat a quoted field's embedded\n# newline as part of the value, not as a row break -- this is the fix for\n# the \"COLUMN_NOT_FOUND\" / row-splitting issue seen in Athena.\ndf = (\n    spark.read\n    .option(\"multiLine\", \"true\")\n    .option(\"header\", \"true\")\n    .option(\"quote\", '\"')\n    .option(\"escape\", '\"')\n    .csv(SOURCE_PATH)\n)\n\n# ---- Clean up columns with embedded newlines ----\nfor column_name in COLUMNS_TO_CLEAN:\n    if column_name in df.columns:\n        df = df.withColumn(column_name, regexp_replace(col(column_name), \"\\n\", \", \"))\n\n# ---- Sanity check (shows up in Glue job logs / CloudWatch) ----\nrow_count = df.count()\nprint(f\"Row count after clean read: {row_count}\")\ndf.show(5, truncate=False)\n\n# ---- Write out as Parquet ----\n# Parquet avoids this entire class of row/column-splitting problem going\n# forward, and gives you real typed columns instead of everything-as-string.\n(\n    df.write\n    .mode(\"overwrite\")\n    .parquet(TARGET_PATH)\n)\n\njob.commit()\n"
+}
