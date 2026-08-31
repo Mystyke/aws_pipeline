@@ -36,4 +36,4 @@ Maps each IAM policy in this repo to the role it attaches to, where the file is 
 
 * **AWS_TEST_ROLE** is a broad development/experimentation role, deliberately not least-privilege. It holds high-level permissions to learn how AWS works and to temporarily bypass role blockers during development. The production job roles above use scoped, least-privilege policies — the test role is not intended for production use.
 * The `_Policy_V2` (tier ETL) role includes Glue interactive-session permissions used during development; a production batch-job version would not need these.
-* Account ID in the policy JSONs is the author's AWS account — replace with a placeholder if the repo is public.
+
