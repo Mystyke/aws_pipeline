@@ -1,0 +1,16 @@
+import json
+import boto3
+import os
+
+glue = boto3.client('glue')
+
+def lambda_handler(event, context):
+    # TODO implement
+    job_name =os.environ['GLUE_JOB_NAME']
+
+    response =glue.start_job_run(JobName=job_name)
+    print(f"Started Glue job run: {response['JobRunId']}")
+    return {
+        'statusCode': 200,
+        'body': f"Triggered {job_name}, run ID {response['JobRunId']}"
+    }
