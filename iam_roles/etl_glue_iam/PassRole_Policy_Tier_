@@ -6,7 +6,7 @@
             "Effect": "Allow",
             "Action": "iam:PassRole",
             "Resource": [
-                "arn:aws:iam::810876576924:role/AWS_ROLE_READ_S3_WRITE_S3_GLUE_ETL_SPARK_Policy_V2"
+                "arn:aws:iam::<ACCOUNT_ID>:role/AWS_ROLE_READ_S3_WRITE_S3_GLUE_ETL_SPARK_Policy_V2"
             ]
         }
     ]
