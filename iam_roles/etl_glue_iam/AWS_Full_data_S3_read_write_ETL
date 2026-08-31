@@ -31,7 +31,7 @@
 		{
 			"Effect": "Allow",
 			"Action": "s3:GetObject",
-			"Resource": "arn:aws:s3:::aws-glue-assets-810876576924-eu-north-1/scripts/*"
+			"Resource": "arn:aws:s3:::aws-glue-assets-<ACCOUNT_ID>-eu-north-1/scripts/*"
 		}
 	]
 }
