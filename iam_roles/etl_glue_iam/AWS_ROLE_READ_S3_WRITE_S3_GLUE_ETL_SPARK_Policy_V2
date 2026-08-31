@@ -35,7 +35,7 @@
 		{
 			"Effect": "Allow",
 			"Action": "s3:GetObject",
-			"Resource": "arn:aws:s3:::aws-glue-assets-810876576924-eu-north-1/scripts/*"
+			"Resource": "arn:aws:s3:::aws-glue-assets-<ACCOUNT_ID>-eu-north-1/scripts/*"
 		},
 		{
 			"Effect": "Allow",
@@ -49,7 +49,7 @@
 				"glue:CancelStatement",
 				"glue:TagResource"
 			],
-			"Resource": "arn:aws:glue:eu-north-1:810876576924:session/*"
+			"Resource": "arn:aws:glue:eu-north-1:<ACCOUNT_ID>:session/*"
 		}
 	]
 }
